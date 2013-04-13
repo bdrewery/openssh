@@ -148,25 +148,18 @@ BROKEN=			latest upstream sftp file control public key patch is not up to date f
 EXTRA_PATCHES+=		${FILESDIR}/openssh-${DISTVERSION}.sftpfilecontrol-v1.3.patch
 .endif
 
+EMPTYDIR=		/var/empty
+
 .if ${PORT_OPTIONS:MOVERWRITE_BASE}
 WITH_OPENSSL_BASE=	yes
 CONFIGURE_ARGS+=	--localstatedir=/var
-EMPTYDIR=		/var/empty
 PREFIX=			/usr
 ETCSSH=			/etc/ssh
 USE_RCORDER=		openssh
 PLIST_SUB+=		NOTBASE="@comment "
 PLIST_SUB+=		BASE=""
 PLIST_SUB+=		BASEPREFIX="${PREFIX}"
-PLIST_SUB+=		ERASEEMPTY="@comment "
 .else
-.if exists(/var/empty)
-EMPTYDIR=		/var/empty
-PLIST_SUB+=		ERASEEMPTY="@comment "
-.else
-EMPTYDIR=		${PREFIX}/empty
-PLIST_SUB+=		ERASEEMPTY=""
-.endif
 ETCSSH=			${PREFIX}/etc/ssh
 USE_RC_SUBR=		openssh
 PLIST_SUB+=		NOTBASE=""
@@ -175,7 +168,6 @@ PLIST_SUB+=		BASE="@comment "
 
 # After all
 SUB_LIST+=		ETCSSH="${ETCSSH}"
-PLIST_SUB+=		EMPTYDIR="${EMPTYDIR}"
 CONFIGURE_ARGS+=	--sysconfdir=${ETCSSH} --with-privsep-path=${EMPTYDIR}
 
 RC_SCRIPT_NAME=		openssh
@@ -198,7 +190,6 @@ post-patch:
 .endif
 
 pre-su-install:
-	@${MKDIR} ${EMPTYDIR}
 .if !exists(${ETCSSH})
 	@${MKDIR} ${ETCSSH}
 .endif

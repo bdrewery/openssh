@@ -24,5 +24,3 @@ sbin/sshd
 libexec/sftp-server
 libexec/ssh-keysign
 libexec/ssh-pkcs11-helper
-@exec if [ ! -d %%EMPTYDIR%% ]; then mkdir -p %%EMPTYDIR%% ; fi
-%%ERASEEMPTY%%@dirrm empty

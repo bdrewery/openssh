@@ -169,6 +169,7 @@ RC_SCRIPT_NAME=		openssh
 
 post-patch:
 	@${REINPLACE_CMD} -e 's|-ldes|-lcrypto|g' ${WRKSRC}/configure
+	@${REINPLACE_CMD} -e 's|install: \(.*\) host-key check-config|install: \1|g' ${WRKSRC}/Makefile.in
 	@${REINPLACE_CMD} -e 's|%%PREFIX%%|${LOCALBASE}|' \
 		-e 's|%%RC_SCRIPT_NAME%%|${RC_SCRIPT_NAME}|' ${WRKSRC}/sshd.8
 	@${REINPLACE_CMD} -E -e 's|SSH_VERSION|TMP_SSH_VERSION|' \

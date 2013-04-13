@@ -199,9 +199,6 @@ post-patch:
 
 pre-su-install:
 	@${MKDIR} ${EMPTYDIR}
-	if ! pw groupshow sshd; then pw groupadd sshd -g 22; fi
-	if ! pw usershow sshd; then pw useradd sshd -g sshd -u 22 \
-		-h - -d ${EMPTYDIR} -s /nonexistent -c "sshd privilege separation"; fi
 .if !exists(${ETCSSH})
 	@${MKDIR} ${ETCSSH}
 .endif

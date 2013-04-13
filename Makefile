@@ -52,7 +52,7 @@ OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 .include <bsd.port.pre.mk>
 
 .if ${OSVERSION} >= 900000
-EXTRA_PATCHES=	${FILESDIR}/extra-patch-configure
+CONFIGURE_LIBS+=	-lutil
 .endif
 
 .if ${OSVERSION} >= 900007
@@ -123,9 +123,9 @@ EXTRA_PATCHES+=		${FILESDIR}/openssh-lpk-5.8p2.patch
 USE_OPENLDAP=		yes
 CPPFLAGS+=		-I${LOCALBASE}/include
 CONFIGURE_ARGS+=	--with-ldap=yes \
-			--with-libs='-lldap' \
 			--with-ldflags='-L${LOCALBASE}/lib' \
 			--with-cppflags='${CPPFLAGS}'
+CONFIGURE_LIBS+=	-lldap
 .endif
 
 # See http://www.roumenpetrov.info/openssh/
@@ -160,6 +160,9 @@ PLIST_SUB+=		BASE="@comment "
 # After all
 SUB_LIST+=		ETCSSH="${ETCSSH}"
 CONFIGURE_ARGS+=	--sysconfdir=${ETCSSH} --with-privsep-path=${EMPTYDIR}
+.if !empty(CONFIGURE_LIBS)
+CONFIGURE_ARGS+=	--with-libs='${CONFIGURE_LIBS}'
+.endif
 
 RC_SCRIPT_NAME=		openssh
 

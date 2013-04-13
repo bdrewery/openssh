@@ -207,7 +207,7 @@ post-install:
 	@${CAT} ${PKGMESSAGE}
 
 test:	build
-	(cd ${WRKSRC}/regress && ${SETENV} ${MAKE_ENV} TEST_SHELL=/bin/sh \
+	(cd ${WRKSRC}/regress && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \
 		PATH=${WRKSRC}:${PREFIX}/bin:${PREFIX}/sbin:${PATH} \
 		${MAKE} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS})
 

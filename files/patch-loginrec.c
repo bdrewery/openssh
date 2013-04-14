@@ -1,3 +1,19 @@
+r63028 | dinoex | 2002-07-15 15:08:01 -0500 (Mon, 15 Jul 2002) | 6 lines
+
+- Fix Problem with HAVE_HOST_IN_UTMP
+- update monitor.c
+
+PR:             40576
+Submitted by:   lxv@a-send-pr.sink.omut.org
+
+r99768 | des | 2002-07-11 05:36:10 -0500 (Thu, 11 Jul 2002) | 6 lines
+
+Use realhostname_sa(3) so the IP address will be used instead of the
+hostname if the latter is too long for utmp.
+
+Submitted by:   ru
+
+
 --- loginrec.c.orig	2010-04-09 02:13:27.000000000 -0600
 +++ loginrec.c	2010-09-14 16:14:12.000000000 -0600
 @@ -179,6 +179,9 @@

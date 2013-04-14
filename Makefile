@@ -123,7 +123,7 @@ CONFIGURE_LIBS+=	-lldap
 # See http://www.roumenpetrov.info/openssh/
 .if ${PORT_OPTIONS:MX509}
 PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-7.0/
-PATCHFILES+=		${PORTNAME}-5.8p1+x509-7.0.diff.gz
+PATCHFILES+=		${PORTNAME}-5.9p1+x509-7.0.diff.gz
 PATCH_DIST_STRIP=	-p1
 PLIST_SUB+=		X509=""
 MAN5+=			ssh_engine.5

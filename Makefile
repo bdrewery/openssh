@@ -103,7 +103,7 @@ CFLAGS+=		-DCHROOT
 .endif
 
 .if ${PORT_OPTIONS:MHPN}
-PATCHFILES+=		${PORTNAME}-5.8p1-hpn13v11.diff.gz
+PATCHFILES+=		${PORTNAME}-5.9p1-hpn13v12.diff.gz
 PATCH_DIST_STRIP=
 .endif
 

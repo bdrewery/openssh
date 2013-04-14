@@ -25,6 +25,7 @@ CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/
 
 USE_PERL5_BUILD=	yes
+USE_AUTOTOOLS=		autoconf autoheader
 USE_OPENSSL=		yes
 GNU_CONFIGURE=		yes
 CONFIGURE_ENV=		ac_cv_func_strnvis=no
@@ -40,7 +41,7 @@ MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM KERBEROS \
 			KERB_GSSAPI OPENSSH_CHROOT HPN LPK X509 \
-			OVERWRITE_BASE
+			OVERWRITE_BASE SCTP
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS
 TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
 BSM_DESC=		Enable OpenBSM Auditing
@@ -49,6 +50,7 @@ OPENSSH_CHROOT_DESC=	Enable CHROOT support
 HPN_DESC=		Enable HPN-SSH patch
 LPK_DESC=		Enable LDAP Public Key (LPK) patch
 X509_DESC=		Enable x509 certificate patch
+SCTP_DESC=		Enable SCTP support
 OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 
 .include <bsd.port.pre.mk>
@@ -138,6 +140,12 @@ PLIST_SUB+=		X509=""
 MAN5+=			ssh_engine.5
 .else
 PLIST_SUB+=		X509="@comment "
+.endif
+
+# See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
+.if ${PORT_OPTIONS:MSCTP}
+PATCHFILES+=		${PORTNAME}-sctp-2163.patch.gz
+CONFIGURE_ARGS+=	--with-sctp
 .endif
 
 EMPTYDIR=		/var/empty

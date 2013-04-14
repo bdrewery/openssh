@@ -123,6 +123,7 @@ CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
 CFLAGS+=		-DCHROOT
 .endif
 
+# http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
 PATCHFILES+=		${PORTNAME}-5.8p1-hpn13v11.diff.gz
 PATCH_DIST_STRIP=

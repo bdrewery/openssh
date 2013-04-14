@@ -37,7 +37,7 @@ SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM KERBEROS \
-			KERB_GSSAPI OPENSSH_CHROOT HPN LPK X509 FILECONTROL \
+			KERB_GSSAPI OPENSSH_CHROOT HPN LPK X509 \
 			OVERWRITE_BASE
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS
 TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
@@ -47,7 +47,6 @@ OPENSSH_CHROOT_DESC=	Enable CHROOT support
 HPN_DESC=		Enable HPN-SSH patch
 LPK_DESC=		Enable LDAP Public Key (LPK) patch
 X509_DESC=		Enable x509 certificate patch
-FILECONTROL_DESC=	Enable file control patch (broken)
 OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 
 .include <bsd.port.pre.mk>
@@ -138,14 +137,6 @@ PLIST_SUB+=		X509=""
 MAN5+=			ssh_engine.5
 .else
 PLIST_SUB+=		X509="@comment "
-.endif
-
-# See http://sftpfilecontrol.sourceforge.net/
-.if ${PORT_OPTIONS:MFILECONTROL}
-# Latest sftpfilecontrol patch is against 5.4p1 which does not apply
-# cleanly against 5.8p2, but it's close.
-BROKEN=			latest upstream sftp file control public key patch is not up to date for OpenSSH 5.8p2
-EXTRA_PATCHES+=		${FILESDIR}/openssh-${DISTVERSION}.sftpfilecontrol-v1.3.patch
 .endif
 
 EMPTYDIR=		/var/empty

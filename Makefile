@@ -39,12 +39,11 @@ SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM KERBEROS \
-			KERB_GSSAPI OPENSSH_CHROOT HPN LPK X509 \
+			OPENSSH_CHROOT HPN LPK X509 \
 			OVERWRITE_BASE SCTP
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS
 TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
 BSM_DESC=		Enable OpenBSM Auditing
-KERB_GSSAPI_DESC=	Enable Kerberos/GSSAPI patch (req: GSSAPI)
 OPENSSH_CHROOT_DESC=	Enable CHROOT support
 HPN_DESC=		Enable HPN-SSH patch
 LPK_DESC=		Enable LDAP Public Key (LPK) patch
@@ -64,10 +63,6 @@ CONFIGURE_ARGS+=	--disable-utmp --disable-wtmp --disable-wtmpx --without-lastlog
 
 .if ${PORT_OPTIONS:MX509} && ${PORT_OPTIONS:MHPN}
 BROKEN=		X509 patches and HPN patches do not apply cleanly together
-.endif
-
-.if ${PORT_OPTIONS:MX509} && ${PORT_OPTIONS:MKERB_GSSAPI}
-BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
 .endif
 
 .if defined(OPENSSH_OVERWRITE_BASE)
@@ -93,11 +88,6 @@ CONFIGURE_ARGS+=	--with-audit=bsm
 .if ${PORT_OPTIONS:MKERBEROS}
 CONFIGURE_ARGS+=	--with-kerberos5
 LIB_DEPENDS+=		krb5.3:${PORTSDIR}/security/krb5
-.if ${PORT_OPTIONS:MKERB_GSSAPI}
-PATCH_SITES+=		http://www.sxw.org.uk/computing/patches/
-PATCHFILES+=		openssh-5.7p1-gsskex-all-20110125.patch
-PATCH_DIST_STRIP=
-.endif
 .if ${OPENSSLBASE} == "/usr"
 CONFIGURE_ARGS+=	--without-rpath
 LDFLAGS=		# empty

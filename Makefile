@@ -22,6 +22,8 @@ MAN8=	sftp-server.8 sshd.8 ssh-keysign.8 ssh-pkcs11-helper.8
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 
+PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/
+
 USE_PERL5_BUILD=	yes
 USE_OPENSSL=		yes
 GNU_CONFIGURE=		yes
@@ -110,7 +112,6 @@ CFLAGS+=		-DCHROOT
 .endif
 
 .if ${PORT_OPTIONS:MHPN}
-PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/
 PATCHFILES+=		${PORTNAME}-5.8p1-hpn13v11.diff.gz
 PATCH_DIST_STRIP=
 .endif

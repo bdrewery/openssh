@@ -19,7 +19,9 @@ MAN8=	sftp-server.8 sshd.8 ssh-keysign.8 ssh-pkcs11-helper.8
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 
-PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/
+# XXX: ports/52706 will allow using DEFAULT,x509 here.
+PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/ \
+			http://mirror.shatow.net/freebsd/${PORTNAME}/:x509
 
 USE_PERL5_BUILD=	yes
 USE_AUTOTOOLS=		autoconf autoheader
@@ -110,6 +112,7 @@ CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
 CFLAGS+=		-DCHROOT
 .endif
 
+# http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
 PATCHFILES+=		${PORTNAME}-5.9p1-hpn13v12.diff.gz
 PATCH_DIST_STRIP=
@@ -130,8 +133,8 @@ CONFIGURE_LIBS+=	-lldap
 
 # See http://www.roumenpetrov.info/openssh/
 .if ${PORT_OPTIONS:MX509}
-PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-7.1/
-PATCHFILES+=		${PORTNAME}-5.9p1+x509-7.1.diff.gz
+PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-7.1/:x509
+PATCHFILES+=		${PORTNAME}-5.9p1+x509-7.1.diff.gz:x509
 PATCH_DIST_STRIP=	-p1
 PLIST_SUB+=		X509=""
 MAN5+=			ssh_engine.5

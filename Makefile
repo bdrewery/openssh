@@ -61,12 +61,22 @@ CONFIGURE_LIBS+=	-lutil
 CONFIGURE_ARGS+=	--disable-utmp --disable-wtmp --disable-wtmpx --without-lastlog
 .endif
 
-.if ${PORT_OPTIONS:MX509} && ${PORT_OPTIONS:MHPN}
-BROKEN=		X509 patches and HPN patches do not apply cleanly together
-.endif
+.if ${PORT_OPTIONS:MX509}
+.  if ${PORT_OPTIONS:MHPN}
+BROKEN=		X509 patch and HPN patch do not apply cleanly together
+.  endif
 
-.if ${PORT_OPTIONS:MX509} && ${PORT_OPTIONS:MKERB_GSSAPI}
+.  if ${PORT_OPTIONS:MKERB_GSSAPI}
 BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
+.  endif
+
+.  if ${PORT_OPTIONS:MSCTP}
+BROKEN=		X509 patch and SCTP patch do not apply cleanly together
+.  endif
+
+.  if ${PORT_OPTIONS:MLPK}
+BROKEN=		X509 patch and LPK patch do not apply cleanly together
+.  endif
 .endif
 
 .if defined(OPENSSH_OVERWRITE_BASE)

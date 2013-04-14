@@ -120,7 +120,7 @@ PATCH_DIST_STRIP=
 # and svn repo described here:
 # http://code.google.com/p/openssh-lpk/source/checkout
 .if ${PORT_OPTIONS:MLPK}
-EXTRA_PATCHES+=		${FILESDIR}/openssh-lpk-5.8p2.patch
+PATCHFILES+=		${PORTNAME}-lpk-5.8p2.patch.gz
 USE_OPENLDAP=		yes
 CPPFLAGS+=		-I${LOCALBASE}/include
 CONFIGURE_ARGS+=	--with-ldap=yes \

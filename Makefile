@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 311891 2013-02-08 00:03:18Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 315920 2013-04-17 00:35:31Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	5.8p2

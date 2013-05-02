@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 316929 2013-04-30 13:13:49Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 317070 2013-05-02 02:03:09Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	5.9p1
@@ -193,6 +193,9 @@ RC_SCRIPT_NAME=		openssh
 post-patch:
 	@${REINPLACE_CMD} -e 's|-ldes|-lcrypto|g' ${WRKSRC}/configure
 	@${REINPLACE_CMD} -e 's|install: \(.*\) host-key check-config|install: \1|g' ${WRKSRC}/Makefile.in
+	@${REINPLACE_CMD} -e 's|/usr/X11R6|${LOCALBASE}|' \
+			${WRKSRC}/pathnames.h ${WRKSRC}/sshd_config.5 \
+			${WRKSRC}/ssh_config.5
 	@${REINPLACE_CMD} -e 's|%%PREFIX%%|${LOCALBASE}|' \
 		-e 's|%%RC_SCRIPT_NAME%%|${RC_SCRIPT_NAME}|' ${WRKSRC}/sshd.8
 	@${REINPLACE_CMD} -E -e 's|SSH_VERSION|TMP_SSH_VERSION|' \

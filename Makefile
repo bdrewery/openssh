@@ -149,7 +149,7 @@ CONFIGURE_LIBS+=	-lldap
 
 # See http://www.roumenpetrov.info/openssh/
 .if ${PORT_OPTIONS:MX509}
-X509_VERSION=		7.4
+X509_VERSION=		7.4.1
 PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
 PATCHFILES+=		${PORTNAME}-${DISTVERSION}+x509-${X509_VERSION}.diff.gz:x509
 PATCH_DIST_STRIP=	-p1

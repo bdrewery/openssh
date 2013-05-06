@@ -2,7 +2,7 @@
 # $FreeBSD: head/security/openssh-portable/Makefile 317070 2013-05-02 02:03:09Z bdrewery $
 
 PORTNAME=	openssh
-DISTVERSION=	6.0p1
+DISTVERSION=	6.1p1
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}

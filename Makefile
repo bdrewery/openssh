@@ -129,7 +129,7 @@ CFLAGS+=		-DCHROOT
 
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
-HPN_VERSION=		13v13
+HPN_VERSION=		13v14
 PATCHFILES+=		${PORTNAME}-${DISTVERSION}-hpn${HPN_VERSION}.diff.gz
 PATCH_DIST_STRIP=
 .endif

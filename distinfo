@@ -1,5 +1,5 @@
-SHA256 (openssh-6.1p1.tar.gz) = d1c157f6c0852e90c191cc7c9018a583b51e3db4035489cb262639d337a1c411
-SIZE (openssh-6.1p1.tar.gz) = 1134820
+SHA256 (openssh-6.2p1.tar.gz) = 58690267d7455f444e87c2f8cd9be91fc686ffc0c02d1ebd0be2ab68149f7160
+SIZE (openssh-6.2p1.tar.gz) = 1182181
 SHA256 (openssh-6.1p1-hpn13v14.diff.gz) = d8dada89de2f17f89c1ac40e4cf4e87b69eecde15a1f84baeddd991aa9d1aa91
 SIZE (openssh-6.1p1-hpn13v14.diff.gz) = 20146
 SHA256 (openssh-6.1p1+x509-7.4.diff.gz) = 2f1933ed20e068b681c1bf80be4a19bf3493d2b9f9283cb1aad4a9b95c02c1a2

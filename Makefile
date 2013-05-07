@@ -48,7 +48,7 @@ TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
 BSM_DESC=		Enable OpenBSM Auditing
 OPENSSH_CHROOT_DESC=	Enable CHROOT support
 HPN_DESC=		Enable HPN-SSH patch
-LPK_DESC=		Enable LDAP Public Key (LPK) patch
+LPK_DESC=		Enable LDAP Public Key (LPK) [OBSOLETE]
 X509_DESC=		Enable x509 certificate patch
 SCTP_DESC=		Enable SCTP support
 OVERWRITE_BASE_DESC=	OpenSSH overwrite base
@@ -137,6 +137,7 @@ PATCH_DIST_STRIP=
 # See http://code.google.com/p/openssh-lpk/wiki/Main
 # and svn repo described here:
 # http://code.google.com/p/openssh-lpk/source/checkout
+# LPK is now OBSOLETE with 6.2: https://code.google.com/p/openssh-lpk/issues/detail?id=15#c1
 .if ${PORT_OPTIONS:MLPK}
 PATCHFILES+=		${PORTNAME}-lpk-${DISTVERSION}.patch.gz
 USE_OPENLDAP=		yes

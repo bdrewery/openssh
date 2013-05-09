@@ -40,7 +40,7 @@ MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			OPENSSH_CHROOT HPN LPK X509 \
-			OVERWRITE_BASE SCTP
+			OVERWRITE_BASE SCTP AES_THREADED
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
@@ -55,6 +55,7 @@ OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
+AES_THREADED_DESC=	Threaded AES-CTR [HPN/Experimental]
 
 .include <bsd.port.pre.mk>
 
@@ -69,6 +70,10 @@ CONFIGURE_ARGS+=	--disable-utmp --disable-wtmp --disable-wtmpx --without-lastlog
 .if ${PORT_OPTIONS:MX509}
 .  if ${PORT_OPTIONS:MHPN}
 BROKEN=		X509 patch and HPN patch do not apply cleanly together
+.  endif
+
+.  if ${PORT_OPTIONS:MAES_THREADED}
+BROKEN=		X509 patch and AES_THREADED patch do not apply cleanly together
 .  endif
 
 .  if ${PORT_OPTIONS:MSCTP}
@@ -131,6 +136,13 @@ CFLAGS+=		-DCHROOT
 .if ${PORT_OPTIONS:MHPN}
 HPN_VERSION=		13v14
 PATCHFILES+=		${PORTNAME}-${DISTVERSION}-hpn${HPN_VERSION}.diff.gz
+PATCH_DIST_STRIP=
+.endif
+
+# http://www.psc.edu/index.php/hpn-ssh
+.if ${PORT_OPTIONS:MAES_THREADED}
+AES_THREADED_VERSION=		v14
+PATCHFILES+=		${PORTNAME}-${DISTVERSION}-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
 PATCH_DIST_STRIP=
 .endif
 

@@ -23,6 +23,8 @@ CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/ \
 			http://mirror.shatow.net/freebsd/${PORTNAME}/:x509
 
+EXTRA_PATCHES=		${FILESDIR}/extra-patch-no-such-identity
+
 USE_PERL5_BUILD=	yes
 USE_AUTOTOOLS=		autoconf autoheader
 USE_OPENSSL=		yes

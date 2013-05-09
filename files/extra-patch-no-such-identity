@@ -1,0 +1,116 @@
+Index: sshconnect2.c
+===================================================================
+--- sshconnect2.c	(revision 249015)
++++ sshconnect2.c	(revision 249016)
+@@ -1,4 +1,4 @@
+-/* $OpenBSD: sshconnect2.c,v 1.191 2013/02/15 00:21:01 dtucker Exp $ */
++/* $OpenBSD: sshconnect2.c,v 1.192 2013/02/17 23:16:57 dtucker Exp $ */
+ /* $FreeBSD$ */
+ /*
+  * Copyright (c) 2000 Markus Friedl.  All rights reserved.
+@@ -1418,7 +1418,7 @@
+ 		id = xcalloc(1, sizeof(*id));
+ 		id->key = key;
+ 		id->filename = xstrdup(options.identity_files[i]);
+-		id->userprovided = 1;
++		id->userprovided = options.identity_file_userprovided[i];
+ 		TAILQ_INSERT_TAIL(&files, id, next);
+ 	}
+ 	/* Prefer PKCS11 keys that are explicitly listed */
+Index: readconf.c
+===================================================================
+--- readconf.c	(revision 249015)
++++ readconf.c	(revision 249016)
+@@ -1,4 +1,4 @@
+-/* $OpenBSD: readconf.c,v 1.194 2011/09/23 07:45:05 markus Exp $ */
++/* $OpenBSD: readconf.c,v 1.195 2013/02/17 23:16:57 dtucker Exp $ */
+ /* $FreeBSD$ */
+ /*
+  * Author: Tatu Ylonen <ylo@cs.hut.fi>
+@@ -356,6 +356,26 @@
+ 	options->tun_open = SSH_TUNMODE_NO;
+ }
+ 
++void
++add_identity_file(Options *options, const char *dir, const char *filename,
++    int userprovided)
++{
++	char *path;
++
++	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
++		fatal("Too many identity files specified (max %d)",
++		    SSH_MAX_IDENTITY_FILES);
++
++	if (dir == NULL) /* no dir, filename is absolute */
++		path = xstrdup(filename);
++	else
++		(void)xasprintf(&path, "%.100s%.100s", dir, filename);
++
++	options->identity_file_userprovided[options->num_identity_files] =
++	    userprovided;
++	options->identity_files[options->num_identity_files++] = path;
++}
++
+ /*
+  * Returns the number of the token pointed to by cp or oBadOption.
+  */
+@@ -616,9 +636,7 @@
+ 			if (*intptr >= SSH_MAX_IDENTITY_FILES)
+ 				fatal("%.200s line %d: Too many identity files specified (max %d).",
+ 				    filename, linenum, SSH_MAX_IDENTITY_FILES);
+-			charptr = &options->identity_files[*intptr];
+-			*charptr = xstrdup(arg);
+-			*intptr = *intptr + 1;
++			add_identity_file(options, NULL, arg, 1);
+ 		}
+ 		break;
+ 
+Index: readconf.h
+===================================================================
+--- readconf.h	(revision 249015)
++++ readconf.h	(revision 249016)
+@@ -1,4 +1,4 @@
+-/* $OpenBSD: readconf.h,v 1.91 2011/09/23 07:45:05 markus Exp $ */
++/* $OpenBSD: readconf.h,v 1.92 2013/02/17 23:16:57 dtucker Exp $ */
+ /* $FreeBSD$ */
+ 
+ /*
+@@ -97,6 +97,7 @@
+ 
+ 	int     num_identity_files;	/* Number of files for RSA/DSA identities. */
+ 	char   *identity_files[SSH_MAX_IDENTITY_FILES];
++	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+ 	Key    *identity_keys[SSH_MAX_IDENTITY_FILES];
+ 
+ 	/* Local TCP/IP forward requests. */
+@@ -172,5 +173,6 @@
+ 
+ void	 add_local_forward(Options *, const Forward *);
+ void	 add_remote_forward(Options *, const Forward *);
++void	 add_identity_file(Options *, const char *, const char *, int);
+ 
+ #endif				/* READCONF_H */
+Index: ssh.c
+===================================================================
+--- ssh.c	(revision 249015)
++++ ssh.c	(revision 249016)
+@@ -1,4 +1,4 @@
+-/* $OpenBSD: ssh.c,v 1.370 2012/07/06 01:47:38 djm Exp $ */
++/* $OpenBSD: ssh.c,v 1.371 2013/02/17 23:16:57 dtucker Exp $ */
+ /* $FreeBSD$ */
+ /*
+  * Author: Tatu Ylonen <ylo@cs.hut.fi>
+@@ -407,12 +407,7 @@
+ 				    strerror(errno));
+ 				break;
+ 			}
+-			if (options.num_identity_files >=
+-			    SSH_MAX_IDENTITY_FILES)
+-				fatal("Too many identity files specified "
+-				    "(max %d)", SSH_MAX_IDENTITY_FILES);
+-			options.identity_files[options.num_identity_files++] =
+-			    xstrdup(optarg);
++			add_identity_file(&options, NULL, optarg, 1);
+ 			break;
+ 		case 'I':
+ #ifdef ENABLE_PKCS11

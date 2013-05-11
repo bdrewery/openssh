@@ -1,19 +1,8 @@
-r56266 | dinoex | 2002-03-17 14:24:24 -0600 (Sun, 17 Mar 2002) | 4 lines
+r99053 | des | 2002-06-29 05:57:13 -0500 (Sat, 29 Jun 2002) | 4 lines
 Changed paths:
-   M /head/security/hpn-ssh/Makefile
-   M /head/security/hpn-ssh/files/patch-auth.c
-   A /head/security/hpn-ssh/files/patch-auth1.c
-   A /head/security/hpn-ssh/files/patch-auth2.c
-   M /head/security/hpn-ssh/files/patch-session.c
-   M /head/security/openssh-portable/Makefile
-   M /head/security/openssh-portable/files/patch-auth.c
-   A /head/security/openssh-portable/files/patch-auth1.c
-   A /head/security/openssh-portable/files/patch-auth2.c
-   M /head/security/openssh-portable/files/patch-session.c
+   M /head/crypto/openssh/auth2.c
 
-Merged patches for HAVE_LOGIN_CAP from stable
-
-PR:             35904
+Apply class-imposed login restrictions.
 
 --- auth2.c.orig	2009-06-22 00:11:07.000000000 -0600
 +++ auth2.c	2010-09-14 16:14:12.000000000 -0600

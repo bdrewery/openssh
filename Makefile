@@ -65,8 +65,11 @@ AES_THREADED_DESC=	Threaded AES-CTR [HPN/Experimental]
 CONFIGURE_LIBS+=	-lutil
 .endif
 
+# 900007 is when utmp(5) was removed and utmpx(3) added
 .if ${OSVERSION} >= 900007
 CONFIGURE_ARGS+=	--disable-utmp --disable-wtmp --disable-wtmpx --without-lastlog
+.else
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
 .endif
 
 .if ${PORT_OPTIONS:MX509}

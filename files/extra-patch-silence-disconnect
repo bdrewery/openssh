@@ -1,0 +1,30 @@
+r249475 | des | 2013-04-14 08:06:07 -0500 (Sun, 14 Apr 2013) | 2 lines
+
+Silence "received disconnect" in the common case.
+
+Index: packet.c
+===================================================================
+--- packet.c	(revision 249474)
++++ packet.c	(revision 249475)
+@@ -1465,7 +1465,11 @@
+ 			case SSH2_MSG_DISCONNECT:
+ 				reason = packet_get_int();
+ 				msg = packet_get_string(NULL);
+-				error("Received disconnect from %s: %u: %.400s",
++				/* Ignore normal client exit notifications */
++				do_log2(active_state->server_side &&
++				    reason == SSH2_DISCONNECT_BY_APPLICATION ?
++				    SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_ERROR,
++				    "Received disconnect from %s: %u: %.400s",
+ 				    get_remote_ipaddr(), reason, msg);
+ 				xfree(msg);
+ 				cleanup_exit(255);
+@@ -1490,7 +1494,7 @@
+ 				break;
+ 			case SSH_MSG_DISCONNECT:
+ 				msg = packet_get_string(NULL);
+-				error("Received disconnect from %s: %.400s",
++				logit("Received disconnect from %s: %.400s",
+ 				    get_remote_ipaddr(), msg);
+ 				cleanup_exit(255);
+ 				break;

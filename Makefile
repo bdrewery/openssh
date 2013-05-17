@@ -2,7 +2,7 @@
 # $FreeBSD: head/security/openssh-portable/Makefile 317070 2013-05-02 02:03:09Z bdrewery $
 
 PORTNAME=	openssh
-DISTVERSION=	6.2p1
+DISTVERSION=	6.2p2
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -22,9 +22,6 @@ CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 # XXX: ports/52706 will allow using DEFAULT,x509 here.
 PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/ \
 			http://mirror.shatow.net/freebsd/${PORTNAME}/:x509
-
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-no-such-identity
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-silence-disconnect
 
 USE_PERL5_BUILD=	yes
 USE_AUTOTOOLS=		autoconf autoheader
@@ -141,7 +138,7 @@ CFLAGS+=		-DCHROOT
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
 HPN_VERSION=		13v14
-PATCHFILES+=		${PORTNAME}-${DISTVERSION}-hpn${HPN_VERSION}.diff.gz
+PATCHFILES+=		${PORTNAME}-6.2p1-hpn${HPN_VERSION}.diff.gz
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-window-size
 PATCH_DIST_STRIP=
 .endif
@@ -149,7 +146,7 @@ PATCH_DIST_STRIP=
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MAES_THREADED}
 AES_THREADED_VERSION=		v14
-PATCHFILES+=		${PORTNAME}-${DISTVERSION}-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
+PATCHFILES+=		${PORTNAME}-6.2p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
 PATCH_DIST_STRIP=
 .endif
 
@@ -158,7 +155,7 @@ PATCH_DIST_STRIP=
 # http://code.google.com/p/openssh-lpk/source/checkout
 # LPK is now OBSOLETE with 6.2: https://code.google.com/p/openssh-lpk/issues/detail?id=15#c1
 .if ${PORT_OPTIONS:MLPK}
-PATCHFILES+=		${PORTNAME}-lpk-${DISTVERSION}.patch.gz
+PATCHFILES+=		${PORTNAME}-lpk-6.2p1.patch.gz
 USE_OPENLDAP=		yes
 CPPFLAGS+=		-I${LOCALBASE}/include
 CONFIGURE_ARGS+=	--with-ldap=yes \
@@ -171,7 +168,7 @@ CONFIGURE_LIBS+=	-lldap
 .if ${PORT_OPTIONS:MX509}
 X509_VERSION=		7.4.1
 PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
-PATCHFILES+=		${PORTNAME}-${DISTVERSION}+x509-${X509_VERSION}.diff.gz:x509
+PATCHFILES+=		${PORTNAME}-6.2p1+x509-${X509_VERSION}.diff.gz:x509
 PATCH_DIST_STRIP=	-p1
 PLIST_SUB+=		X509=""
 MAN5+=			ssh_engine.5

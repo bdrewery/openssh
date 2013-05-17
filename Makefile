@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 317070 2013-05-02 02:03:09Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 318386 2013-05-17 13:56:29Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.2p1
@@ -42,14 +42,13 @@ SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
-			OPENSSH_CHROOT HPN LPK X509 \
+			HPN LPK X509 \
 			OVERWRITE_BASE SCTP AES_THREADED
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
 TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
 BSM_DESC=		Enable OpenBSM Auditing
-OPENSSH_CHROOT_DESC=	Enable CHROOT support
 HPN_DESC=		Enable HPN-SSH patch
 LPK_DESC=		Enable LDAP Public Key (LPK) [OBSOLETE]
 X509_DESC=		Enable x509 certificate patch
@@ -132,10 +131,6 @@ LDFLAGS=		# empty
 
 .if ${OPENSSLBASE} != "/usr"
 CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
-.endif
-
-.if ${PORT_OPTIONS:MOPENSSH_CHROOT}
-CFLAGS+=		-DCHROOT
 .endif
 
 # http://www.psc.edu/index.php/hpn-ssh

@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 318400 2013-05-17 19:47:35Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 318727 2013-05-21 22:29:07Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.2p2
@@ -37,6 +37,8 @@ ETCOLD=			${PREFIX}/etc
 
 SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
+
+BROKEN=		Reports of crashing sshd
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN LPK X509 \

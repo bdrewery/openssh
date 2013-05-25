@@ -94,6 +94,10 @@ BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
 
 .endif
 
+.if ${PORT_OPTIONS:MHEIMDAL_BASE} && ${PORT_OPTIONS:MKERB_GSSAPI}
+BROKEN=		KERB_GSSAPI Requires either MIT or HEMIDAL, does not build with base Heimdal currently
+.endif
+
 .if defined(OPENSSH_OVERWRITE_BASE)
 PORT_OPTIONS+=		OVERWRITE_BASE
 .endif

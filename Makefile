@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 321578 2013-06-22 15:11:30Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 322345 2013-07-05 18:27:50Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.2p2
@@ -8,10 +8,12 @@ PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
 MASTER_SITE_SUBDIR=	OpenSSH/portable
-PKGNAMESUFFIX=	-portable
+PKGNAMESUFFIX?=	-portable
 
 MAINTAINER=	bdrewery@FreeBSD.org
 COMMENT=	The portable version of OpenBSD's OpenSSH
+
+LICENSE=	BSD
 
 MAN1=	sftp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 scp.1 ssh.1
 MLINKS=	ssh.1 slogin.1

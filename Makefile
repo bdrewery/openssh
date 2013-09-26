@@ -190,7 +190,7 @@ PLIST_SUB+=		X509="@comment "
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
 .if ${PORT_OPTIONS:MSCTP}
-PATCHFILES+=		${PORTNAME}-sctp-2163.patch.gz
+PATCHFILES+=		${PORTNAME}-sctp-2329.patch.gz
 CONFIGURE_ARGS+=	--with-sctp
 .endif
 

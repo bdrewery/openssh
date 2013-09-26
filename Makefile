@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 325040 2013-08-20 11:43:44Z az $
+# $FreeBSD: head/security/openssh-portable/Makefile 329176 2013-10-03 12:57:46Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.2p2
@@ -14,11 +14,6 @@ MAINTAINER=	bdrewery@FreeBSD.org
 COMMENT=	The portable version of OpenBSD's OpenSSH
 
 LICENSE=	BSD
-
-MAN1=	sftp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 scp.1 ssh.1
-MLINKS=	ssh.1 slogin.1
-MAN5=	moduli.5 ssh_config.5 sshd_config.5
-MAN8=	sftp-server.8 sshd.8 ssh-keysign.8 ssh-pkcs11-helper.8
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 
@@ -48,18 +43,20 @@ OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
-TCP_WRAPPERS_DESC=	Enable tcp_wrappers support
-BSM_DESC=		Enable OpenBSM Auditing
-KERB_GSSAPI_DESC=	Enable Kerberos/GSSAPI patch (req: GSSAPI)
-HPN_DESC=		Enable HPN-SSH patch
-LPK_DESC=		Enable LDAP Public Key (LPK) [OBSOLETE]
-X509_DESC=		Enable x509 certificate patch
-SCTP_DESC=		Enable SCTP support
+TCP_WRAPPERS_DESC=	tcp_wrappers support
+BSM_DESC=		OpenBSM Auditing
+KERB_GSSAPI_DESC=	Kerberos/GSSAPI patch (req: GSSAPI)
+HPN_DESC=		HPN-SSH patch
+LPK_DESC=		LDAP Public Key (LPK) [OBSOLETE]
+X509_DESC=		x509 certificate patch
+SCTP_DESC=		SCTP support
 OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
 AES_THREADED_DESC=	Threaded AES-CTR [HPN/Experimental]
+
+PLIST_SUB+=		MANPREFIX=${MANPREFIX}
 
 .include <bsd.port.pre.mk>
 
@@ -186,7 +183,6 @@ PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
 PATCHFILES+=		${PORTNAME}-6.2p1+x509-${X509_VERSION}.diff.gz:x509
 PATCH_DIST_STRIP=	-p1
 PLIST_SUB+=		X509=""
-MAN5+=			ssh_engine.5
 .else
 PLIST_SUB+=		X509="@comment "
 .endif
@@ -203,6 +199,7 @@ EMPTYDIR=		/var/empty
 WITH_OPENSSL_BASE=	yes
 CONFIGURE_ARGS+=	--localstatedir=/var
 PREFIX=			/usr
+NO_MTREE=		yes
 ETCSSH=			/etc/ssh
 USE_RCORDER=		openssh
 PLIST_SUB+=		NOTBASE="@comment "
@@ -230,8 +227,10 @@ post-patch:
 	@${REINPLACE_CMD} -e 's|/usr/X11R6|${LOCALBASE}|' \
 			${WRKSRC}/pathnames.h ${WRKSRC}/sshd_config.5 \
 			${WRKSRC}/ssh_config.5
+.if !${PORT_OPTIONS:MOVERWRITE_BASE}
 	@${REINPLACE_CMD} -e 's|%%PREFIX%%|${LOCALBASE}|' \
 		-e 's|%%RC_SCRIPT_NAME%%|${RC_SCRIPT_NAME}|' ${WRKSRC}/sshd.8
+.endif
 	@${REINPLACE_CMD} -E -e 's|SSH_VERSION|TMP_SSH_VERSION|' \
 		-e 's|.*SSH_RELEASE.*||' ${WRKSRC}/version.h
 	@${ECHO_CMD} '#define FREEBSD_PORT_VERSION	" FreeBSD-${PKGNAME}"' >> \
@@ -245,22 +244,15 @@ post-patch:
 		${WRKSRC}/version.h
 .endif
 
-pre-su-install:
-.if !exists(${ETCSSH})
-	@${MKDIR} ${ETCSSH}
+pre-install:
+# Workaround not running mtree BSD.root.dist on / since PREFIX=/usr
+.if ${PORT_OPTIONS:MOVERWRITE_BASE}
+	${MKDIR} ${STAGEDIR}/etc/rc.d
 .endif
-.for i in ${PRECIOUS}
-.if exists(${ETCOLD}/${i}) && !exists(${ETCSSH}/${i})
-	@${ECHO_MSG} "==>   Linking ${ETCSSH}/${i} from old layout."
-	${LN} ${ETCOLD}/${i} ${ETCSSH}/${i}
-.endif
-.endfor
 
 post-install:
-	${INSTALL_DATA} -c ${WRKSRC}/ssh_config.out ${ETCSSH}/ssh_config-dist
-	${INSTALL_DATA} -c ${WRKSRC}/sshd_config.out ${ETCSSH}/sshd_config-dist
-
-	@${CAT} ${PKGMESSAGE}
+	${INSTALL_DATA} -c ${WRKSRC}/ssh_config.out ${STAGEDIR}${ETCSSH}/ssh_config-dist
+	${INSTALL_DATA} -c ${WRKSRC}/sshd_config.out ${STAGEDIR}${ETCSSH}/sshd_config-dist
 
 test:	build
 	(cd ${WRKSRC}/regress && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \

@@ -168,7 +168,7 @@ PATCH_DIST_STRIP=
 # http://code.google.com/p/openssh-lpk/source/checkout
 # LPK is now OBSOLETE with 6.2: https://code.google.com/p/openssh-lpk/issues/detail?id=15#c1
 .if ${PORT_OPTIONS:MLPK}
-PATCHFILES+=		${PORTNAME}-lpk-6.2p1.patch.gz
+PATCHFILES+=		${PORTNAME}-lpk-6.3p1.patch.gz
 USE_OPENLDAP=		yes
 CPPFLAGS+=		-I${LOCALBASE}/include
 CONFIGURE_ARGS+=	--with-ldap=yes \

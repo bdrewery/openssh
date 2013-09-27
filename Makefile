@@ -51,7 +51,7 @@ OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
-AES_THREADED_DESC=	Threaded AES-CTR [HPN/Experimental]
+AES_THREADED_DESC=	Threaded AES-CTR
 
 PLIST_SUB+=		MANPREFIX=${MANPREFIX}
 
@@ -159,7 +159,7 @@ PATCH_DIST_STRIP=
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MAES_THREADED}
 AES_THREADED_VERSION=		v14
-PATCHFILES+=		${PORTNAME}-6.2p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
+PATCHFILES+=		${PORTNAME}-6.3p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
 PATCH_DIST_STRIP=
 .endif
 

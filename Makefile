@@ -151,7 +151,7 @@ CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
 HPN_VERSION=		13v14
-PATCHFILES+=		${PORTNAME}-6.2p1-hpn${HPN_VERSION}.diff.gz
+PATCHFILES+=		${PORTNAME}-6.3p1-hpn${HPN_VERSION}.diff.gz
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-window-size
 PATCH_DIST_STRIP=
 .endif

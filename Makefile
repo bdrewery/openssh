@@ -140,7 +140,6 @@ CONFIGURE_LIBS+=	-lgssapi_krb5
 # Adapated from 5.7 patch at http://www.sxw.org.uk/computing/patches/
 .	if ${PORT_OPTIONS:MKERB_GSSAPI}
 PATCHFILES+=		openssh-6.3p1-gsskex-all-20110125.patch.gz
-PATCH_DIST_STRIP=
 .	endif
 .	if ${OPENSSLBASE} == "/usr"
 CONFIGURE_ARGS+=	--without-rpath
@@ -159,16 +158,14 @@ CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN}
 HPN_VERSION=		13v14
-PATCHFILES+=		${PORTNAME}-6.3p1-hpn${HPN_VERSION}.diff.gz
+PATCHFILES+=		${PORTNAME}-6.3p1-hpn${HPN_VERSION}.diff.gz:-p1
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-window-size
-PATCH_DIST_STRIP=
 .endif
 
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MAES_THREADED}
 AES_THREADED_VERSION=		v14
-PATCHFILES+=		${PORTNAME}-6.3p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz
-PATCH_DIST_STRIP=
+PATCHFILES+=		${PORTNAME}-6.3p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz:-p1
 .endif
 
 # See http://code.google.com/p/openssh-lpk/wiki/Main
@@ -189,7 +186,7 @@ CONFIGURE_LIBS+=	-lldap
 .if ${PORT_OPTIONS:MX509}
 X509_VERSION=		7.6
 PATCH_SITES+=		http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
-PATCHFILES+=		${PORTNAME}-6.3p1+x509-${X509_VERSION}.diff.gz:x509
+PATCHFILES+=		${PORTNAME}-6.3p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 PATCH_DIST_STRIP=	-p1
 PLIST_SUB+=		X509=""
 .else

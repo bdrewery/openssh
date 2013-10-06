@@ -16,10 +16,6 @@ LICENSE=	BSD
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 
-# XXX: ports/52706 will allow using DEFAULT,x509 here.
-PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/ \
-			http://mirror.shatow.net/freebsd/${PORTNAME}/:x509
-
 USE_AUTOTOOLS=		autoconf autoheader
 USE_OPENSSL=		yes
 GNU_CONFIGURE=		yes
@@ -106,6 +102,8 @@ LIBEDIT_CONFIGURE_WITH=	libedit
 BSM_CONFIGURE_ON=	--with-audit=bsm
 
 .include <bsd.port.pre.mk>
+
+PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509
 
 .if ${OSVERSION} >= 900000
 CONFIGURE_LIBS+=	-lutil

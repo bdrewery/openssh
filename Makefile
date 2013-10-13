@@ -92,7 +92,6 @@ KERB_GSSAPI_PATCHFILES=	openssh-6.3p1-gsskex-all-20110125.patch.gz
 
 MIT_LIB_DEPENDS=		krb5.3:${PORTSDIR}/security/krb5
 HEIMDAL_LIB_DEPENDS=		krb5.26:${PORTSDIR}/security/heimdal
-HEIMDAL_BASE_CONFIGURE_LIBS=	-lgssapi_krb5
 
 PAM_CONFIGURE_WITH=	pam
 TCP_WRAPPERS_CONFIGURE_WITH=	tcp-wrappers
@@ -171,8 +170,14 @@ PORT_OPTIONS+=		OVERWRITE_BASE
 .endif
 
 .if ${PORT_OPTIONS:MMIT} || ${PORT_OPTIONS:MHEIMDAL} || ${PORT_OPTIONS:MHEIMDAL_BASE}
-CONFIGURE_ARGS+=	--with-kerberos5
-
+.	if ${PORT_OPTIONS:MHEIMDAL_BASE}
+.		if ${PORT_OPTIONS:MKERB_GSSAPI}
+CONFIGURE_LIBS+=	-lgssapi_krb5
+.		endif
+CONFIGURE_ARGS+=	--with-kerberos5=/usr
+.	else
+CONFIGURE_ARGS+=	--with-kerberos5=${LOCALBASE}
+.	endif
 .	if ${OPENSSLBASE} == "/usr"
 CONFIGURE_ARGS+=	--without-rpath
 LDFLAGS=		# empty

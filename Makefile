@@ -32,8 +32,8 @@ MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN LPK X509 KERB_GSSAPI \
-			OVERWRITE_BASE SCTP AES_THREADED LDNS
-OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS
+			OVERWRITE_BASE SCTP AES_THREADED LDNS NONECIPHER
+OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS NONECIPHER
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
 TCP_WRAPPERS_DESC=	tcp_wrappers support
@@ -49,6 +49,7 @@ HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
 AES_THREADED_DESC=	Threaded AES-CTR
+NONECIPHER_DESC=	NONE Cipher support
 
 OPTIONS_SUB=		yes
 PLIST_SUB+=		MANPREFIX=${MANPREFIX}
@@ -60,12 +61,10 @@ LDNS_CFLAGS=		-I${LOCALBASE}/include
 LDNS_CONFIGURE_ON=	--with-ldflags='-L${LOCALBASE}/lib'
 
 # http://www.psc.edu/index.php/hpn-ssh
-HPN_VERSION=		13v14
-HPN_PATCHFILES=		${PORTNAME}-6.3p1-hpn${HPN_VERSION}.diff.gz:-p1
 HPN_EXTRA_PATCHES=	${FILESDIR}/extra-patch-hpn-window-size
-# http://www.psc.edu/index.php/hpn-ssh
-AES_THREADED_VERSION=		v14
-AES_THREADED_PATCHFILES=${PORTNAME}-6.3p1-CTR-threaded-${AES_THREADED_VERSION}.diff.gz:-p1
+HPN_CONFIGURE_WITH=		hpn
+NONECIPHER_CONFIGURE_WITH=	nonecipher
+AES_THREADED_CONFIGURE_WITH=	aes-threaded
 
 # See http://code.google.com/p/openssh-lpk/wiki/Main
 # and svn repo described here:
@@ -101,9 +100,25 @@ TCP_WRAPPERS_CONFIGURE_WITH=	tcp-wrappers
 LIBEDIT_CONFIGURE_WITH=	libedit
 BSM_CONFIGURE_ON=	--with-audit=bsm
 
+
+PORTDOCS=	*
+
 .include <bsd.port.pre.mk>
 
-PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509
+# http://www.psc.edu/index.php/hpn-ssh
+.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+HPN_VERSION=		14v2
+PATCH_SITES+=		${MASTER_SITE_SOURCEFORGE:S/$/:hpn/}
+PATCH_SITE_SUBDIR+=	hpnssh/HPN-SSH%20${HPN_VERSION}%20${DISTVERSION}/:hpn
+PATCHFILES+=		${PORTNAME}-${DISTVERSION}-hpnssh${HPN_VERSION}.diff.gz:-p1:hpn
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-build-options
+# Remove HPN if only AES requested
+.  if !${PORT_OPTIONS:MHPN}
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-no-hpn
+.  endif
+.endif
+
+PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509,hpn
 
 .if ${OSVERSION} >= 900000
 CONFIGURE_LIBS+=	-lutil
@@ -117,12 +132,8 @@ EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
 .endif
 
 .if ${PORT_OPTIONS:MX509}
-.  if ${PORT_OPTIONS:MHPN}
+.  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
 BROKEN=		X509 patch and HPN patch do not apply cleanly together
-.  endif
-
-.  if ${PORT_OPTIONS:MAES_THREADED}
-BROKEN=		X509 patch and AES_THREADED patch do not apply cleanly together
 .  endif
 
 .  if ${PORT_OPTIONS:MSCTP}
@@ -208,7 +219,10 @@ RC_SCRIPT_NAME=		openssh
 
 post-patch:
 	@${REINPLACE_CMD} -e 's|-ldes|-lcrypto|g' ${WRKSRC}/configure
-	@${REINPLACE_CMD} -e 's|install: \(.*\) host-key check-config|install: \1|g' ${WRKSRC}/Makefile.in
+	@${REINPLACE_CMD} \
+	    -e 's|install: \(.*\) host-key check-config|install: \1|g' \
+	    -e 's|-lpthread|${PTHREAD_LIBS}|' \
+	    ${WRKSRC}/Makefile.in
 	@${REINPLACE_CMD} -e 's|/usr/X11R6|${LOCALBASE}|' \
 			${WRKSRC}/pathnames.h ${WRKSRC}/sshd_config.5 \
 			${WRKSRC}/ssh_config.5
@@ -238,6 +252,10 @@ pre-install:
 post-install:
 	${INSTALL_DATA} ${WRKSRC}/ssh_config.out ${STAGEDIR}${ETCSSH}/ssh_config-dist
 	${INSTALL_DATA} ${WRKSRC}/sshd_config.out ${STAGEDIR}${ETCSSH}/sshd_config-dist
+.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+	${MKDIR} ${STAGEDIR}${DOCSDIR}
+	${INSTALL_DATA} ${WRKSRC}/HPN-README ${STAGEDIR}${DOCSDIR}
+.endif
 
 test:	build
 	(cd ${WRKSRC}/regress && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \

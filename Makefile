@@ -85,7 +85,7 @@ X509_PATCHFILES=	openssh-6.4-x509-glue.patch \
 			${PORTNAME}-6.3p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
-SCTP_PATCHFILES=	${PORTNAME}-sctp-2329.patch.gz
+SCTP_PATCHFILES=	${PORTNAME}-6.5p1-sctp-2329.patch.gz
 SCTP_CONFIGURE_WITH=	sctp
 
 # Adapated from 5.7 patch at http://www.sxw.org.uk/computing/patches/

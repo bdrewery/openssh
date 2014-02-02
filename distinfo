@@ -10,5 +10,5 @@ SHA256 (openssh-6.3p1-gsskex-all-20110125.patch.gz) = 9dac542ed23f1ee330ddb03a34
 SIZE (openssh-6.3p1-gsskex-all-20110125.patch.gz) = 23486
 SHA256 (openssh-lpk-6.3p1.patch.gz) = d2a8b7da7acebac2afc4d0a3dffe8fca2e49900cf733af2e7012f2449b3668e1
 SIZE (openssh-lpk-6.3p1.patch.gz) = 17815
-SHA256 (openssh-sctp-2329.patch.gz) = 1c460d6173c87313691ca279ac120959c3693a0570657514f1dcadcff5f405cb
-SIZE (openssh-sctp-2329.patch.gz) = 8706
+SHA256 (openssh-6.5p1-sctp-2329.patch.gz) = 07acf0c6e6be493dbcf6fb166b846eef99256f6f60f0feb3451522147a1d9464
+SIZE (openssh-6.5p1-sctp-2329.patch.gz) = 8722

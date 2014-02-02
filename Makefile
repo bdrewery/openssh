@@ -91,8 +91,8 @@ SCTP_CONFIGURE_WITH=	sctp
 KERB_GSSAPI_PATCHFILES=	openssh-6.3p1-gsskex-all-20110125.patch.gz
 
 
-MIT_LIB_DEPENDS=		krb5.3:${PORTSDIR}/security/krb5
-HEIMDAL_LIB_DEPENDS=		krb5.26:${PORTSDIR}/security/heimdal
+MIT_LIB_DEPENDS=		libkrb5.so.3:${PORTSDIR}/security/krb5
+HEIMDAL_LIB_DEPENDS=		libkrb5.so.26:${PORTSDIR}/security/heimdal
 
 PAM_CONFIGURE_WITH=	pam
 TCP_WRAPPERS_CONFIGURE_WITH=	tcp-wrappers

@@ -88,7 +88,7 @@ SCTP_PATCHFILES=	${PORTNAME}-6.5p1-sctp-2329.patch.gz
 SCTP_CONFIGURE_WITH=	sctp
 
 # Adapated from 5.7 patch at http://www.sxw.org.uk/computing/patches/
-KERB_GSSAPI_PATCHFILES=	openssh-6.3p1-gsskex-all-20110125.patch.gz
+KERB_GSSAPI_PATCHFILES=	openssh-6.5p1-gsskex-all-20110125.patch.gz
 
 
 MIT_LIB_DEPENDS=		libkrb5.so.3:${PORTSDIR}/security/krb5
@@ -102,6 +102,10 @@ BSM_CONFIGURE_ON=	--with-audit=bsm
 
 
 .include <bsd.port.pre.mk>
+
+.if ${PORT_OPTIONS:MKERB_GSSAPI}
+BROKEN=		KERB_GSSAPI Patch is not updated for 6.5 and upstream has not been active since 2001.
+.endif
 
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}

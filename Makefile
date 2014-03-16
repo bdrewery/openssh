@@ -79,9 +79,9 @@ LPK_CONFIGURE_ON=	--with-ldap=yes \
 LPK_USE=		OPENLDAP=yes
 
 # See http://www.roumenpetrov.info/openssh/
-X509_VERSION=		7.8
+X509_VERSION=		7.9
 X509_PATCH_SITES=	http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
-X509_PATCHFILES=	${PORTNAME}-6.5p1+x509-${X509_VERSION}.diff.gz:-p1:x509
+X509_PATCHFILES=	${PORTNAME}-6.6p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
 SCTP_PATCHFILES=	${PORTNAME}-6.6p1-sctp-2329.patch.gz

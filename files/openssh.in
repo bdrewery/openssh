@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $FreeBSD: head/security/openssh-portable/files/openssh.in 342618 2014-02-05 01:40:46Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/files/openssh.in 342628 2014-02-05 03:06:08Z bdrewery $
 #
 # PROVIDE: openssh
 # REQUIRE: DAEMON
@@ -38,7 +38,7 @@ openssh_keygen()
 	if [ -f %%ETCSSH%%/ssh_host_key -a \
 	    -f %%ETCSSH%%/ssh_host_dsa_key -a \
 	    -f %%ETCSSH%%/ssh_host_rsa_key -a \
-	    -f %%ETCSSH%%/ssh_host_ecdsa_key -a
+	    -f %%ETCSSH%%/ssh_host_ecdsa_key -a \
 	    -f %%ETCSSH%%/ssh_host_ed25519_key ]; then
 		return 0
 	fi

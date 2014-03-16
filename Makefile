@@ -1,8 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 342618 2014-02-05 01:40:46Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 346742 2014-03-02 08:43:40Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.5p1
+PORTREVISION=	1
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -176,9 +177,7 @@ PORT_OPTIONS+=		OVERWRITE_BASE
 
 .if ${PORT_OPTIONS:MMIT} || ${PORT_OPTIONS:MHEIMDAL} || ${PORT_OPTIONS:MHEIMDAL_BASE}
 .	if ${PORT_OPTIONS:MHEIMDAL_BASE}
-.		if ${PORT_OPTIONS:MKERB_GSSAPI}
 CONFIGURE_LIBS+=	-lgssapi_krb5
-.		endif
 CONFIGURE_ARGS+=	--with-kerberos5=/usr
 .	else
 CONFIGURE_ARGS+=	--with-kerberos5=${LOCALBASE}

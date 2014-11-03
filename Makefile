@@ -34,7 +34,7 @@ SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
-			HPN LPK X509 KERB_GSSAPI \
+			HPN X509 KERB_GSSAPI \
 			OVERWRITE_BASE SCTP AES_THREADED LDNS NONECIPHER
 OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS NONECIPHER
 OPTIONS_RADIO=		KERBEROS
@@ -43,7 +43,6 @@ TCP_WRAPPERS_DESC=	tcp_wrappers support
 BSM_DESC=		OpenBSM Auditing
 KERB_GSSAPI_DESC=	Kerberos/GSSAPI patch (req: GSSAPI)
 HPN_DESC=		HPN-SSH patch
-LPK_DESC=		LDAP Public Key (LPK) [OBSOLETE]
 LDNS_DESC=		SSHFP/LDNS support
 X509_DESC=		x509 certificate patch
 SCTP_DESC=		SCTP support
@@ -70,17 +69,6 @@ HPN_EXTRA_PATCHES=	${FILESDIR}/extra-patch-hpn-window-size
 HPN_CONFIGURE_WITH=		hpn
 NONECIPHER_CONFIGURE_WITH=	nonecipher
 AES_THREADED_CONFIGURE_WITH=	aes-threaded
-
-# See http://code.google.com/p/openssh-lpk/wiki/Main
-# and svn repo described here:
-# http://code.google.com/p/openssh-lpk/source/checkout
-# LPK is now OBSOLETE with 6.2: https://code.google.com/p/openssh-lpk/issues/detail?id=15#c1
-LPK_PATCHFILES=		${PORTNAME}-lpk-6.3p1.patch.gz
-LPK_CPPFLAGS=		-I${LOCALBASE}/include
-LPK_CONFIGURE_ON=	--with-ldap=yes \
-			--with-ldflags='-L${LOCALBASE}/lib' \
-			--with-cppflags='${CPPFLAGS}'
-LPK_USE=		OPENLDAP=yes
 
 # See http://www.roumenpetrov.info/openssh/
 X509_VERSION=		7.9
@@ -144,10 +132,6 @@ BROKEN=		X509 patch and HPN patch do not apply cleanly together
 BROKEN=		X509 patch and SCTP patch do not apply cleanly together
 .  endif
 
-.  if ${PORT_OPTIONS:MLPK}
-BROKEN=		X509 patch and LPK patch do not apply cleanly together
-.  endif
-
 .  if ${PORT_OPTIONS:MKERB_GSSAPI}
 BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
 .  endif
@@ -193,10 +177,6 @@ IGNORE=	KERB_GSSAPI requires one of MIT HEIMDAL or HEIMDAL_BASE
 
 .if ${OPENSSLBASE} != "/usr"
 CONFIGURE_ARGS+=	--with-ssl-dir=${OPENSSLBASE}
-.endif
-
-.if ${PORT_OPTIONS:MLPK}
-CONFIGURE_LIBS+=	-lldap
 .endif
 
 EMPTYDIR=		/var/empty

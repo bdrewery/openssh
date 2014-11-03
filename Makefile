@@ -1,8 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 346742 2014-03-02 08:43:40Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 371252 2014-10-20 10:09:19Z marino $
 
 PORTNAME=	openssh
 DISTVERSION=	6.6p1
+PORTREVISION=	4
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -17,6 +18,7 @@ COMMENT=	The portable version of OpenBSD's OpenSSH
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.*
 
+USES=			alias
 USE_AUTOTOOLS=		autoconf autoheader
 USE_OPENSSL=		yes
 GNU_CONFIGURE=		yes
@@ -30,6 +32,9 @@ ETCOLD=			${PREFIX}/etc
 
 SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
+
+# https://github.com/openssh/openssh-portable/commit/5618210618256bbf5f4f71b2887ff186fd451736.patch
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-openssh661
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN LPK X509 KERB_GSSAPI \
@@ -87,9 +92,10 @@ X509_PATCHFILES=	${PORTNAME}-6.6p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 SCTP_PATCHFILES=	${PORTNAME}-6.6p1-sctp-2329.patch.gz
 SCTP_CONFIGURE_WITH=	sctp
 
-# Adapated from 5.7 patch at http://www.sxw.org.uk/computing/patches/
-KERB_GSSAPI_PATCHFILES=	openssh-6.5p1-gsskex-all-20110125.patch.gz
-
+# 6.6 patch taken from http://www.stacken.kth.se/~haba/ which was originally
+# based on 5.7 patch at http://www.sxw.org.uk/computing/patches/
+KERB_GSSAPI_PATCHFILES=	openssh-6.6p1-gsskex-all-20140318.patch.gz:-p1:gsskex
+#KERB_GSSAPI_PATCH_SITES=http://www.stacken.kth.se/~haba/:gsskex
 
 MIT_LIB_DEPENDS=		libkrb5.so.3:${PORTSDIR}/security/krb5
 HEIMDAL_LIB_DEPENDS=		libkrb5.so.26:${PORTSDIR}/security/heimdal
@@ -100,18 +106,15 @@ TCP_WRAPPERS_CONFIGURE_WITH=	tcp-wrappers
 LIBEDIT_CONFIGURE_WITH=	libedit
 BSM_CONFIGURE_ON=	--with-audit=bsm
 
-
 .include <bsd.port.pre.mk>
 
-.if ${PORT_OPTIONS:MKERB_GSSAPI}
-BROKEN=		KERB_GSSAPI Patch is not updated for 6.5 and upstream has not been active since 2001.
-.endif
+PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509,hpn,gsskex
 
 # http://www.psc.edu/index.php/hpn-ssh
 .if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
 PORTDOCS+=		HPN-README
 HPN_VERSION=		14v2
-HPN_DISTVERSION=	6.6p1
+HPN_DISTVERSION=	6.6.1p1
 PATCH_SITES+=		${MASTER_SITE_SOURCEFORGE:S/$/:hpn/}
 PATCH_SITE_SUBDIR+=	hpnssh/HPN-SSH%20${HPN_VERSION}%20${HPN_DISTVERSION}/:hpn
 PATCHFILES+=		${PORTNAME}-${HPN_DISTVERSION}-hpnssh${HPN_VERSION}.diff.gz:-p1:hpn
@@ -121,8 +124,6 @@ EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-build-options
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-no-hpn
 .  endif
 .endif
-
-PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509,hpn
 
 .if ${OSVERSION} >= 900000
 CONFIGURE_LIBS+=	-lutil
@@ -159,15 +160,15 @@ BROKEN=		KERB_GSSAPI Requires either MIT or HEMIDAL, does not build with base He
 .endif
 
 .if ${PORT_OPTIONS:MHEIMDAL_BASE} && !exists(/usr/lib/libkrb5.so)
-IGNORE=		You have selected HEIMDAL_BASE but do not have heimdal installed in base
+IGNORE=		you have selected HEIMDAL_BASE but do not have heimdal installed in base
 .endif
 
 .if ${PORT_OPTIONS:MPAM} && !exists(/usr/include/security/pam_modules.h)
-IGNORE=		Pam must be installed in base
+IGNORE=		PAM must be installed in base
 .endif
 
 .if ${PORT_OPTIONS:MTCP_WRAPPERS} && !exists(/usr/include/tcpd.h)
-IGNORE=		Required /usr/include/tcpd.h missing
+IGNORE=		required /usr/include/tcpd.h missing
 .endif
 
 .if defined(OPENSSH_OVERWRITE_BASE)
@@ -202,6 +203,9 @@ CONFIGURE_LIBS+=	-lldap
 EMPTYDIR=		/var/empty
 
 .if ${PORT_OPTIONS:MOVERWRITE_BASE}
+# XXX: Mark this BROKEN rather than remove the option to force people to notice for POLA.
+DEPRECATED=		Overwrite-base option/port/pkg will be removed. There is no real need for foot-shooting.
+EXPIRATION_DATE=	2015-01-01
 WITH_OPENSSL_BASE=	yes
 CONFIGURE_ARGS+=	--localstatedir=/var
 PREFIX=			/usr
@@ -209,12 +213,13 @@ NO_MTREE=		yes
 ETCSSH=			/etc/ssh
 USE_RCORDER=		openssh
 PLIST_SUB+=		NOTBASE="@comment "
-PLIST_SUB+=		BASEPREFIX="${PREFIX}"
 .else
 ETCSSH=			${PREFIX}/etc/ssh
 USE_RC_SUBR=		openssh
 PLIST_SUB+=		NOTBASE=""
 .endif
+
+PLIST_SUB+=		BASEPREFIX="${PREFIX}"
 
 # After all
 SUB_LIST+=		ETCSSH="${ETCSSH}"
@@ -258,8 +263,8 @@ pre-install:
 .endif
 
 post-install:
-	${INSTALL_DATA} ${WRKSRC}/ssh_config.out ${STAGEDIR}${ETCSSH}/ssh_config-dist
-	${INSTALL_DATA} ${WRKSRC}/sshd_config.out ${STAGEDIR}${ETCSSH}/sshd_config-dist
+	${MV} ${STAGEDIR}${ETCSSH}/ssh_config ${STAGEDIR}${ETCSSH}/ssh_config.sample
+	${MV} ${STAGEDIR}${ETCSSH}/sshd_config ${STAGEDIR}${ETCSSH}/sshd_config.sample
 .if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
 	${MKDIR} ${STAGEDIR}${DOCSDIR}
 	${INSTALL_DATA} ${WRKSRC}/HPN-README ${STAGEDIR}${DOCSDIR}

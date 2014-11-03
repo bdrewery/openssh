@@ -2,8 +2,8 @@
 # $FreeBSD: head/security/openssh-portable/Makefile 371252 2014-10-20 10:09:19Z marino $
 
 PORTNAME=	openssh
-DISTVERSION=	6.6p1
-PORTREVISION=	4
+DISTVERSION=	6.7p1
+PORTREVISION=	0
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -32,9 +32,6 @@ ETCOLD=			${PREFIX}/etc
 
 SUDO?=		# empty
 MAKE_ENV+=	SUDO="${SUDO}"
-
-# https://github.com/openssh/openssh-portable/commit/5618210618256bbf5f4f71b2887ff186fd451736.patch
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-openssh661
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN LPK X509 KERB_GSSAPI \

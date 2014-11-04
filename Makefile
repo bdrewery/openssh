@@ -76,7 +76,7 @@ X509_PATCH_SITES=	http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x50
 X509_PATCHFILES=	${PORTNAME}-6.6p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
-SCTP_PATCHFILES=	${PORTNAME}-6.6p1-sctp-2329.patch.gz
+SCTP_PATCHFILES=	${PORTNAME}-6.7p1-sctp-2496.patch.gz:-p1
 SCTP_CONFIGURE_WITH=	sctp
 
 # 6.6 patch taken from http://www.stacken.kth.se/~haba/ which was originally

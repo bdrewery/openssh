@@ -124,6 +124,8 @@ EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
 .endif
 
 .if ${PORT_OPTIONS:MX509}
+BROKEN=		X509 does not apply to 6.7 yet.
+
 .  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
 BROKEN=		X509 patch and HPN patch do not apply cleanly together
 .  endif

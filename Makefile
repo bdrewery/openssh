@@ -36,22 +36,22 @@ MAKE_ENV+=	SUDO="${SUDO}"
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN X509 KERB_GSSAPI \
 			OVERWRITE_BASE SCTP AES_THREADED LDNS NONECIPHER
-OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS NONECIPHER
+OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS LDNS
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
 TCP_WRAPPERS_DESC=	tcp_wrappers support
 BSM_DESC=		OpenBSM Auditing
-KERB_GSSAPI_DESC=	Kerberos/GSSAPI patch (req: GSSAPI)
-HPN_DESC=		HPN-SSH patch
+KERB_GSSAPI_DESC=	Kerberos/GSSAPI patch (req: GSSAPI) [BROKEN]
+HPN_DESC=		HPN-SSH patch [BROKEN]
 LDNS_DESC=		SSHFP/LDNS support
-X509_DESC=		x509 certificate patch
+X509_DESC=		x509 certificate patch [BROKEN]
 SCTP_DESC=		SCTP support
 OVERWRITE_BASE_DESC=	OpenSSH overwrite base
 HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
-AES_THREADED_DESC=	Threaded AES-CTR
-NONECIPHER_DESC=	NONE Cipher support
+AES_THREADED_DESC=	Threaded AES-CTR [BROKEN]
+NONECIPHER_DESC=	NONE Cipher support [BROKEN]
 
 OPTIONS_SUB=		yes
 PLIST_SUB+=		MANPREFIX=${MANPREFIX}
@@ -124,8 +124,16 @@ EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
 .endif
 
 .if ${PORT_OPTIONS:MX509}
-BROKEN=		X509 does not apply to 6.7 yet.
+BROKEN=		X509 does not apply yet. Use security/openssh-portable66
+.endif
+.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+BROKEN=		HPN does not apply yet. Use security/openssh-portable66
+.endif
+.if ${PORT_OPTIONS:MKERB_GSSAPI}
+BROKEN=		KERB_GSSAPI does not apply yet. Use security/openssh-portable66
+.endif
 
+.if ${PORT_OPTIONS:MX509}
 .  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
 BROKEN=		X509 patch and HPN patch do not apply cleanly together
 .  endif

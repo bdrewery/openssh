@@ -2,8 +2,8 @@
 # $FreeBSD: head/security/openssh-portable/Makefile 382980 2015-04-02 02:21:59Z bdrewery $
 
 PORTNAME=	openssh
-DISTVERSION=	6.7p1
-PORTREVISION=	5
+DISTVERSION=	6.8p1
+PORTREVISION=	0
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -223,9 +223,9 @@ post-install:
 	${INSTALL_DATA} ${WRKSRC}/HPN-README ${STAGEDIR}${DOCSDIR}
 .endif
 
-test:	build
-	(cd ${WRKSRC}/regress && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \
+test: build
+	(cd ${WRKSRC} && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \
 		PATH=${WRKSRC}:${PREFIX}/bin:${PREFIX}/sbin:${PATH} \
-		${MAKE} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS})
+		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} tests)
 
 .include <bsd.port.post.mk>

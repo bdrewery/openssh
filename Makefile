@@ -72,7 +72,8 @@ X509_PATCH_SITES=	http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x50
 X509_PATCHFILES=	${PORTNAME}-6.8p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
-SCTP_PATCHFILES=	${PORTNAME}-6.7p1-sctp-2496.patch.gz:-p1
+# and https://bugzilla.mindrot.org/show_bug.cgi?id=1604
+SCTP_PATCHFILES=	${PORTNAME}-6.8p1-sctp-2573.patch.gz:-p1
 SCTP_CONFIGURE_WITH=	sctp
 
 MIT_LIB_DEPENDS=		libkrb5.so.3:${PORTSDIR}/security/krb5

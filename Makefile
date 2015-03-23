@@ -1,9 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 381709 2015-03-20 02:43:43Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 381823 2015-03-21 19:28:40Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.7p1
-PORTREVISION=	1
+PORTREVISION=	2
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	${MASTER_SITE_OPENBSD}
@@ -191,7 +191,7 @@ IGNORE=	Overwrite base option is no longer supported.
 .endif
 
 USE_RC_SUBR=		openssh
-PLIST_SUB+=		BASEPREFIX="${PREFIX}"
+ETCDIR=			${PREFIX}/etc/ssh
 
 # After all
 CONFIGURE_ARGS+=	--sysconfdir=${ETCDIR} --with-privsep-path=${EMPTYDIR}

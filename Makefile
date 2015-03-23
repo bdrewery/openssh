@@ -67,9 +67,9 @@ NONECIPHER_CONFIGURE_WITH=	nonecipher
 AES_THREADED_CONFIGURE_WITH=	aes-threaded
 
 # See http://www.roumenpetrov.info/openssh/
-X509_VERSION=		8.2
+X509_VERSION=		8.3
 X509_PATCH_SITES=	http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
-X509_PATCHFILES=	${PORTNAME}-6.7p1+x509-${X509_VERSION}.diff.gz:-p1:x509
+X509_PATCHFILES=	${PORTNAME}-6.8p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
 SCTP_PATCHFILES=	${PORTNAME}-6.7p1-sctp-2496.patch.gz:-p1

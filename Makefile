@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 381981 2015-03-23 04:23:08Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 382200 2015-03-25 08:30:27Z marino $
 
 PORTNAME=	openssh
 DISTVERSION=	6.7p1
@@ -207,7 +207,6 @@ post-patch:
 	@${REINPLACE_CMD} -e 's|-ldes|-lcrypto|g' ${WRKSRC}/configure
 	@${REINPLACE_CMD} \
 	    -e 's|install: \(.*\) host-key check-config|install: \1|g' \
-	    -e 's|-lpthread|${PTHREAD_LIBS}|' \
 	    ${WRKSRC}/Makefile.in
 	@${REINPLACE_CMD} -e 's|/usr/X11R6|${LOCALBASE}|' \
 			${WRKSRC}/pathnames.h ${WRKSRC}/sshd_config.5 \

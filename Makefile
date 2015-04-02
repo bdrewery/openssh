@@ -1,5 +1,5 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 382887 2015-04-01 01:04:23Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 382980 2015-04-02 02:21:59Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.7p1
@@ -25,9 +25,6 @@ GNU_CONFIGURE=		yes
 CONFIGURE_ENV=		ac_cv_func_strnvis=no
 CONFIGURE_ARGS=		--prefix=${PREFIX} --with-md5-passwords \
 			--without-zlib-version-check --with-ssl-engine
-PRECIOUS=		ssh_config sshd_config ssh_host_key ssh_host_key.pub \
-			ssh_host_rsa_key ssh_host_rsa_key.pub ssh_host_dsa_key \
-			ssh_host_dsa_key.pub
 ETCOLD=			${PREFIX}/etc
 
 SUDO?=		# empty

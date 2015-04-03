@@ -32,8 +32,8 @@ MAKE_ENV+=	SUDO="${SUDO}"
 
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN X509 KERB_GSSAPI \
-			OVERWRITE_BASE SCTP AES_THREADED LDNS NONECIPHER
-OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS NONECIPHER
+			OVERWRITE_BASE SCTP LDNS NONECIPHER
+OPTIONS_DEFAULT=	LIBEDIT PAM TCP_WRAPPERS HPN LDNS
 OPTIONS_RADIO=		KERBEROS
 OPTIONS_RADIO_KERBEROS=	MIT HEIMDAL HEIMDAL_BASE
 TCP_WRAPPERS_DESC=	tcp_wrappers support
@@ -47,7 +47,6 @@ OVERWRITE_BASE_DESC=	EOL, No longer supported.
 HEIMDAL_DESC=		Heimdal Kerberos (security/heimdal)
 HEIMDAL_BASE_DESC=	Heimdal Kerberos (base)
 MIT_DESC=		MIT Kerberos (security/krb5)
-AES_THREADED_DESC=	Threaded AES-CTR
 NONECIPHER_DESC=	NONE Cipher support
 
 OPTIONS_SUB=		yes
@@ -61,10 +60,8 @@ LDNS_CFLAGS=		-I${LOCALBASE}/include
 LDNS_CONFIGURE_ON=	--with-ldflags='-L${LOCALBASE}/lib'
 
 # http://www.psc.edu/index.php/hpn-ssh
-HPN_EXTRA_PATCHES=	${FILESDIR}/extra-patch-hpn-window-size
 HPN_CONFIGURE_WITH=		hpn
 NONECIPHER_CONFIGURE_WITH=	nonecipher
-AES_THREADED_CONFIGURE_WITH=	aes-threaded
 
 # See http://www.roumenpetrov.info/openssh/
 X509_VERSION=		8.3
@@ -94,19 +91,15 @@ PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509,hpn,gs
 EXTRA_PATCHES:=		${EXTRA_PATCHES:N${TCP_WRAPPERS_EXTRA_PATCHES}}
 .endif
 
-# http://www.psc.edu/index.php/hpn-ssh
-.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+# http://www.psc.edu/index.php/hpn-ssh https://github.com/rapier1/hpn-ssh https://github.com/rapier1/openssh-portable
+.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MNONECIPHER}
 PORTDOCS+=		HPN-README
 HPN_VERSION=		14v5
 HPN_DISTVERSION=	6.7p1
 #PATCH_SITES+=		${MASTER_SITE_SOURCEFORGE:S/$/:hpn/}
 #PATCH_SITE_SUBDIR+=	hpnssh/HPN-SSH%20${HPN_VERSION}%20${HPN_DISTVERSION}/:hpn
-PATCHFILES+=		${PORTNAME}-${HPN_DISTVERSION}-hpnssh${HPN_VERSION}.diff.gz:-p1:hpn
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-build-options
-# Remove HPN if only AES requested
-.  if !${PORT_OPTIONS:MHPN}
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn-no-hpn
-.  endif
+#PATCHFILES+=		${PORTNAME}-${HPN_DISTVERSION}-hpnssh${HPN_VERSION}.diff.gz:-p1:hpn
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn:-p2
 .endif
 
 # Must add this patch after HPN due to conflicts
@@ -134,7 +127,7 @@ EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-version-addendum
 
 .if ${PORT_OPTIONS:MX509}
-.  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+.  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MNONECIPHER}
 BROKEN=		X509 patch and HPN patch do not apply cleanly together
 .  endif
 
@@ -219,7 +212,7 @@ post-install:
 	    ${STAGEDIR}${ETCDIR}//ssh_config.sample
 	${MV} ${STAGEDIR}${ETCDIR}/sshd_config \
 	    ${STAGEDIR}${ETCDIR}/sshd_config.sample
-.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MAES_THREADED} || ${PORT_OPTIONS:MNONECIPHER}
+.if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MNONECIPHER}
 	${MKDIR} ${STAGEDIR}${DOCSDIR}
 	${INSTALL_DATA} ${WRKSRC}/HPN-README ${STAGEDIR}${DOCSDIR}
 .endif

@@ -138,6 +138,10 @@ BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
 
 .endif
 
+.  if ${PORT_OPTIONS:MKERB_GSSAPI}
+BROKEN=		Does not apply to 6.8
+.  endif
+
 .if ${PORT_OPTIONS:MHEIMDAL_BASE} && ${PORT_OPTIONS:MKERB_GSSAPI}
 BROKEN=		KERB_GSSAPI Requires either MIT or HEMIDAL, does not build with base Heimdal currently
 .endif

@@ -27,9 +27,6 @@ CONFIGURE_ARGS=		--prefix=${PREFIX} --with-md5-passwords \
 			--without-zlib-version-check --with-ssl-engine
 ETCOLD=			${PREFIX}/etc
 
-SUDO?=		# empty
-MAKE_ENV+=	SUDO="${SUDO}"
-
 OPTIONS_DEFINE=		PAM TCP_WRAPPERS LIBEDIT BSM \
 			HPN X509 KERB_GSSAPI \
 			OVERWRITE_BASE SCTP LDNS NONECIPHER
@@ -218,8 +215,11 @@ post-install:
 .endif
 
 test: build
-	(cd ${WRKSRC} && ${SETENV} OBJ=${WRKDIR} ${MAKE_ENV} TEST_SHELL=/bin/sh \
+	cd ${WRKSRC} && ${SETENV} -i \
+		OBJ=${WRKDIR} ${MAKE_ENV} \
+		TEST_SHELL=${SH} \
+		SUDO="${SUDO}" \
 		PATH=${WRKSRC}:${PREFIX}/bin:${PREFIX}/sbin:${PATH} \
-		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} tests)
+		${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} tests
 
 .include <bsd.port.post.mk>

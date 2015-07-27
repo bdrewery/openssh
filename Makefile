@@ -1,9 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable-devel/Makefile 390509 2015-06-24 17:59:51Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 393002 2015-07-27 18:41:02Z bdrewery $
 
 PORTNAME=	openssh
 DISTVERSION=	6.9p1
-PORTREVISION=	0
+PORTREVISION=	1
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	OPENBSD/OpenSSH/portable

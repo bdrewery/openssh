@@ -1,9 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 392830 2015-07-24 17:01:58Z bdrewery $
+# $FreeBSD: head/security/openssh-portable-devel/Makefile 390509 2015-06-24 17:59:51Z bdrewery $
 
 PORTNAME=	openssh
-DISTVERSION=	6.8p1
-PORTREVISION=	8
+DISTVERSION=	6.9p1
+PORTREVISION=	0
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	OPENBSD/OpenSSH/portable
@@ -47,7 +47,6 @@ NONECIPHER_DESC=	NONE Cipher support
 
 OPTIONS_SUB=		yes
 
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-ttssh
 TCP_WRAPPERS_EXTRA_PATCHES=${FILESDIR}/extra-patch-tcpwrappers
 
 LDNS_CONFIGURE_WITH=	ldns

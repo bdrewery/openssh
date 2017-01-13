@@ -1,9 +1,9 @@
 # Created by: dwcjr@inethouston.net
-# $FreeBSD: head/security/openssh-portable/Makefile 393002 2015-07-27 18:41:02Z bdrewery $
+# $FreeBSD: head/security/openssh-portable/Makefile 424592 2016-10-24 22:52:17Z bdrewery $
 
 PORTNAME=	openssh
-DISTVERSION=	6.9p1
-PORTREVISION=	1
+DISTVERSION=	7.4p1
+PORTREVISION=	0
 PORTEPOCH=	1
 CATEGORIES=	security ipv6
 MASTER_SITES=	OPENBSD/OpenSSH/portable
@@ -17,7 +17,7 @@ COMMENT=	The portable version of OpenBSD's OpenSSH
 
 CONFLICTS?=		openssh-3.* ssh-1.* ssh2-3.* openssh-portable-devel-*
 
-USES=			alias
+USES=			alias ncurses
 USE_AUTOTOOLS=		autoconf autoheader
 USE_OPENSSL=		yes
 GNU_CONFIGURE=		yes
@@ -50,7 +50,7 @@ OPTIONS_SUB=		yes
 TCP_WRAPPERS_EXTRA_PATCHES=${FILESDIR}/extra-patch-tcpwrappers
 
 LDNS_CONFIGURE_WITH=	ldns
-LDNS_LIB_DEPENDS=	libldns.so:${PORTSDIR}/dns/ldns
+LDNS_LIB_DEPENDS=	libldns.so:dns/ldns
 LDNS_EXTRA_PATCHES=	${FILESDIR}/extra-patch-ldns
 LDNS_CFLAGS=		-I${LOCALBASE}/include
 LDNS_CONFIGURE_ON=	--with-ldflags='-L${LOCALBASE}/lib'
@@ -60,17 +60,19 @@ HPN_CONFIGURE_WITH=		hpn
 NONECIPHER_CONFIGURE_WITH=	nonecipher
 
 # See http://www.roumenpetrov.info/openssh/
-X509_VERSION=		8.4
+X509_VERSION=		9.3
 X509_PATCH_SITES=	http://www.roumenpetrov.info/openssh/x509-${X509_VERSION}/:x509
-X509_PATCHFILES=	${PORTNAME}-6.9p1+x509-${X509_VERSION}.diff.gz:-p1:x509
+X509_EXTRA_PATCHES+=	${FILESDIR}/extra-patch-x509-glue
+X509_PATCHFILES=	${PORTNAME}-7.4p1+x509-${X509_VERSION}.diff.gz:-p1:x509
 
 # See https://bugzilla.mindrot.org/show_bug.cgi?id=2016
 # and https://bugzilla.mindrot.org/show_bug.cgi?id=1604
-SCTP_PATCHFILES=	${PORTNAME}-6.8p1-sctp-2573.patch.gz:-p1
+SCTP_PATCHFILES=	${PORTNAME}-7.2_p1-sctp.patch.gz:-p1
 SCTP_CONFIGURE_WITH=	sctp
+SCTP_BROKEN=		does not apply to 7.3+
 
-MIT_LIB_DEPENDS=		libkrb5.so.3:${PORTSDIR}/security/krb5
-HEIMDAL_LIB_DEPENDS=		libkrb5.so.26:${PORTSDIR}/security/heimdal
+MIT_LIB_DEPENDS=		libkrb5.so.3:security/krb5
+HEIMDAL_LIB_DEPENDS=		libkrb5.so.26:security/heimdal
 
 PAM_CONFIGURE_WITH=	pam
 TCP_WRAPPERS_CONFIGURE_WITH=	tcp-wrappers
@@ -90,6 +92,20 @@ PATCH_SITES+=		http://mirror.shatow.net/freebsd/${PORTNAME}/:DEFAULT,x509,hpn,gs
 EXTRA_PATCHES:=		${EXTRA_PATCHES:N${TCP_WRAPPERS_EXTRA_PATCHES}}
 .endif
 
+# Must add this patch before HPN due to conflicts
+.if ${PORT_OPTIONS:MKERB_GSSAPI}
+# Patch from:
+# http://sources.debian.net/data/main/o/openssh/1:7.4p1-5/debian/patches/gssapi.patch
+# which was originally based on 5.7 patch from
+# http://www.sxw.org.uk/computing/patches/
+# It is mirrored simply to apply gzip -9.
+.  if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MNONECIPHER}
+# Needed glue for applying HPN patch without conflict
+EXTRA_PATCHES+=	${FILESDIR}/extra-patch-hpn-gss-glue
+.  endif
+PATCHFILES+=	openssh-7.4p1-gsskex-all-20141021-debian-rh-20161228.patch.gz:-p1:gsskex
+.endif
+
 # http://www.psc.edu/index.php/hpn-ssh https://github.com/rapier1/hpn-ssh https://github.com/rapier1/openssh-portable
 .if ${PORT_OPTIONS:MHPN} || ${PORT_OPTIONS:MNONECIPHER}
 PORTDOCS+=		HPN-README
@@ -100,26 +116,9 @@ HPN_DISTVERSION=	6.7p1
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-hpn:-p2
 .endif
 
-# Must add this patch after HPN due to conflicts
-.if ${PORT_OPTIONS:MKERB_GSSAPI}
-# 6.7 patch taken from
-# http://sources.debian.net/data/main/o/openssh/1:6.7p1-3/debian/patches/gssapi.patch
-# which was originally based on 5.7 patch from
-# http://www.sxw.org.uk/computing/patches/
-PATCHFILES+=	openssh-6.7p1-gsskex-all-20141021-284f364.patch.gz:-p1:gsskex
-.endif
-
-
-.if ${OSVERSION} >= 900000
 CONFIGURE_LIBS+=	-lutil
-.endif
 
-# 900007 is when utmp(5) was removed and utmpx(3) added
-.if ${OSVERSION} >= 900007
 CONFIGURE_ARGS+=	--disable-utmp --disable-wtmp --disable-wtmpx --without-lastlog
-.else
-EXTRA_PATCHES+=		${FILESDIR}/extra-patch-sshd-utmp-size
-.endif
 
 # Keep this last
 EXTRA_PATCHES+=		${FILESDIR}/extra-patch-version-addendum
@@ -138,10 +137,6 @@ BROKEN=		X509 patch incompatible with KERB_GSSAPI patch
 .  endif
 
 .endif
-
-.  if ${PORT_OPTIONS:MKERB_GSSAPI}
-BROKEN=		Does not apply to 6.8
-.  endif
 
 .if ${PORT_OPTIONS:MHEIMDAL_BASE} && ${PORT_OPTIONS:MKERB_GSSAPI}
 BROKEN=		KERB_GSSAPI Requires either MIT or HEMIDAL, does not build with base Heimdal currently

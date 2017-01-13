@@ -1,3 +1,4 @@
+--- UTC
 r99053 | des | 2002-06-29 05:57:13 -0500 (Sat, 29 Jun 2002) | 4 lines
 Changed paths:
    M /head/crypto/openssh/auth2.c
@@ -14,21 +15,22 @@ Apply class-imposed login restrictions.
  #include "dispatch.h"
  #include "pathnames.h"
  #include "buffer.h"
-@@ -219,6 +220,13 @@
+@@ -216,6 +217,14 @@ input_userauth_request(int type, u_int32
  	Authmethod *m = NULL;
  	char *user, *service, *method, *style = NULL;
  	int authenticated = 0;
 +#ifdef HAVE_LOGIN_CAP
++	struct ssh *ssh = active_state; /* XXX */
 +	login_cap_t *lc;
 +	const char *from_host, *from_ip;
 +
-+	from_host = get_canonical_hostname(options.use_dns);
-+	from_ip = get_remote_ipaddr();
++	from_host = auth_get_canonical_hostname(ssh, options.use_dns);
++	from_ip = ssh_remote_ipaddr(ssh);
 +#endif
  
  	if (authctxt == NULL)
  		fatal("input_userauth_request: no authctxt");
-@@ -265,6 +273,27 @@
+@@ -262,6 +271,27 @@ input_userauth_request(int type, u_int32
  		    "(%s,%s) -> (%s,%s)",
  		    authctxt->user, authctxt->service, user, service);
  	}
@@ -55,4 +57,4 @@ Apply class-imposed login restrictions.
 +
  	/* reset state */
  	auth2_challenge_stop(authctxt);
- #ifdef JPAKE
+ 
